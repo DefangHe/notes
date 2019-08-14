@@ -1,0 +1,126 @@
+docker归类：
+1、加载镜像
+docker load < /home/std.tad
+
+2、导出镜像
+docker save -o udm.rar registry.gitlab.casa-systems.com/mobility/sim-udm   
+
+3、镜像的删除
+//清理none 镜像的2种方法
+docker rmi -f $(docker images | grep none | awk '{print $3}')
+docker image prune 
+
+//强制删除在运行的镜像
+（1）docker ps （2）docker stop pfcp（name or id） （3）docker rmi --force pfcp
+
+4、docker启动与关闭
+启动 ：systemctl start docker
+守护进程重启：sudo systemctl daemon-reload
+重启docker服务：systemctl restart  docker
+重启docker服务：sudo service docker restart
+关闭：docker service docker stop
+关闭：docker systemctl stop docker
+
+5、docker遇到的连接超时的问题，解决办法：
+root@git211:/git/master/sm/src/pkg/sess/test# cat /etc/docker/daemon.json 
+{
+  "registry-mirrors": [
+    "https://registry.docker-cn.com",
+    "http://f2d6cb40.m.daocloud.io",
+    "http://f1361db2.m.daocloud.io"
+  ],
+  "insecure-registries": [
+    "devops.casachina.com",
+    "172.0.5.75:5000",
+    "registry.gitlab.casa-systems.com"
+  ]
+}
+
+
+Linux 归类：
+1、history查找指定命令的格式
+history |grep docker
+2、ubuntu版本查询：
+lsb_release -a
+3、查找根目录下的指定文件
+find / -name test.go 
+4、     
+
+
+
+gitlab and github 归类：
+1、更新子目录
+git submodule update --init --recursive
+2、忽略修改权限的文件
+git config --global http.sslverify false
+3、撤回add文件
+git reset HEAD Dockerfile 
+4、忽略修改的文件
+git checkout -- Dockerfile 
+5、撤回上次commit文件
+git reset --hard HEAD^ 
+6、撤回上上次commit
+git reset --hard HEAD^^ (HEAD~2)
+7、删除git status时使用IDE出现的.idea/
+git rm -r --cached .idea
+8、忽略被修改quan
+git config core.fileMode false
+
+
+
+
+
+golang 归类：
+dlv常用调试命令：
+dlv --hell
+dlv debug test.go
+c  运送到断点或程序终止
+r   重启进程
+b main.main  在main函数处打断点（其他函数类推）
+b /root/test/test.go:10  绝对路径下文件的第8行
+breakpoints(bp)   输出活动断点信息
+list 显示断点处前后5行源代码
+n 下一行
+print（p）计算一个表达式，这里打印
+whatis msg  查看msg的类型
+goroutine 显示或更改当前goroutine
+goroutine 2  指定查看goroutine 2
+goroutines 列举程序gorouutines
+clear 1  删除断点1
+on  在命令中断点执行命令
+
+
+
+
+
+smf project 归类：
+1、解决连接gitlab卡顿现象：
+在C:\Windows\System32\drivers\etc\hosts文件添加内网地址：
+172.25.2.42 gitlab.casa-systems.com
+172.25.2.42	spicket-new
+
+
+2、pfcp环境的搭建：
+dcomp exec amf bash
+--proc Create --dnn inet1 --supi 12345678901234 --pdu 5 --host smfsm --amf amf
+iptables -I DOCKER-USER  --dst 172.17.0.0/16 -j ACCEPT
+iptables -nv -L
+
+（upf配置，一个逗号一条指令）
+进入upf，enable输入密码casa，config , user-plane-service upf, pfcp,peer smf ,ip-addr 你的pfcp的ip，
+ip pool pfcp-poor type ipv4 1.1.0.0/16 public index 0，end，end，end，end，copy running-config startup-config
+
+3、每次重启虚拟机之后会遇到的问题和解决办法：
+
+{"level":"error","casa":{"interface":"PFCP","src":{"file":"pfcp_intf.go","function":"smfsm/pkg/intf.(*pfcp_intf).SendEstReq",
+"line":79}},"time":"2019-08-08T09:05:53Z","message":"Failed to send PFCP Est Req: rpc error: code = Unknown desc = Max. retransmission reached"}
+
+解决办法：
+ifconfig ens4 10.1.9.6 netmask 255.255.0.0
+iptables -I DOCKER-USER --dst 172.24.37.0/24 -j ACCEPT
+iptables -nv -L
+
+4、抓包相关
+（1）tcpdump -i any -w pfcp.pcap
+
+others归类
